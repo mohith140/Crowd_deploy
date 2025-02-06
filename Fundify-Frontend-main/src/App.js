@@ -56,6 +56,7 @@ function App() {
           <Redirect to="/home/creators" />
         </Route>
       </Switch>
+     
     </ThemeProvider>
   );
 }

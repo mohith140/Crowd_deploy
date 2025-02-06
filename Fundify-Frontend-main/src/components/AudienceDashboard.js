@@ -13,6 +13,7 @@ import Grid from "@mui/material/Grid";
 import { useHistory } from "react-router-dom";
 import Creators from "./audience/creators/Creators";
 import Projects from "./audience/creators/Projects";
+import ProjectDetails from "./audience/creators/ProjectDetails";
 import {
   BrowserRouter as Router,
   Switch,
@@ -138,6 +139,7 @@ export default function Home() {
         <Route path="/audiencedashboard/exclusive">
           <Exclusive />
         </Route>
+        <Route path="/project-details/:projectId" component={ProjectDetails} />
       </Switch>
     </React.Fragment>
   );

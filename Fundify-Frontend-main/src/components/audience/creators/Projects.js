@@ -1,4 +1,152 @@
-import React, { useState } from "react";
+// import React, { useState, useRef, useEffect } from "react";
+// import axios from "axios";
+// import Grid from "@mui/material/Grid";
+// import Card from "@mui/material/Card";
+// import CardActions from "@mui/material/CardActions";
+// import CardContent from "@mui/material/CardContent";
+// import CardMedia from "@mui/material/CardMedia";
+// import Typography from "@mui/material/Typography";
+// import Button from "@mui/material/Button";
+// import TextField from "@mui/material/TextField";
+// import { SERVER_URL } from "../../../constant/serverUrl";
+// import { useHistory } from "react-router-dom";
+
+// function Projects() {
+//   const history = useHistory();
+//   const [projects, setProjects] = useState([]);
+//   const amountRefs = useRef([]);
+//   const [amount, setAmount] = useState(0);
+
+//   useEffect(() => {
+//     axios
+//       .get(SERVER_URL + "/projects")
+//       .then((response) => {
+//         setProjects(response.data);
+//       })
+//       .catch((err) => console.log(err));
+//   }, []);
+
+//   const handlePledge = (pageName, projectTitle, idx) => {
+//     const pledgeAmount = parseInt(amountRefs.current[idx].value) || 0;
+//     setAmount(pledgeAmount);
+//     handlePayment(pledgeAmount);
+
+//     axios
+//       .post(SERVER_URL + "/creator/project/pledge", {
+//         timestamp: Date.now(),
+//         projectTitle: projectTitle,
+//         amount: pledgeAmount,
+//         pageName: pageName,
+//         audienceEmail: localStorage.getItem("email"),
+//         firstName: localStorage.getItem("firstName"),
+//         lastName: localStorage.getItem("lastName"),
+//       })
+//       .then(() => axios.get(SERVER_URL + "/projects").then((response) => setProjects(response.data)))
+//       .catch((err) => console.log(err));
+//   };
+
+//   const handlePayment = (amount) => {
+//     const options = {
+//       key: "rzp_test_XphPOSB4djGspx",
+//       amount: amount * 100,
+//       currency: "INR",
+//       name: "Fundify",
+//       description: "Payment for Pledge",
+//       handler: function (response) {
+//         alert("Payment Successful!");
+//       },
+//       prefill: {
+//         name: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+//         email: localStorage.getItem("email"),
+//       },
+//       theme: { color: "#00e676" },
+//     };
+//     const rzp = new window.Razorpay(options);
+//     rzp.open();
+//   };
+
+//   return (
+//     <Grid container spacing={4} style={{ padding: "3rem", backgroundColor: "#f5f5f5" }}>
+//       {projects.map((element, index) => (
+//         <Grid item key={index} xs={12} sm={6} md={4} lg={4}>
+//           <Card
+//             sx={{
+//               width: 330, 
+//              borderRadius: "16px",
+//               backgroundColor: "#1e1e1e",
+//               color: "white",
+//               transition: "transform 0.3s, box-shadow 0.3s",
+//               "&:hover": {
+//                 transform: "scale(1.05)",
+//                 boxShadow: "0 6px 12px rgba(0, 230, 118, 0.5)",
+//               },
+//             }}
+//           >
+//             <CardMedia
+//               component="img"
+//               height="220"
+//               image={element.imageUrl}
+//               alt={element.title}
+//               style={{ borderRadius: "16px 16px 0 0" }}
+//             />
+//             <CardContent>
+//               <Typography gutterBottom variant="h5" style={{ color: "#00e676", textAlign: "center" }}>
+//                 {element.title}
+//               </Typography>
+//               <Typography variant="body2" color="lightgrey" textAlign="center">
+//                 {element.description}
+//               </Typography>
+//             </CardContent>
+//             <CardActions style={{ display: "flex", justifyContent: "space-between", padding: "1rem" }}>
+//               <Typography variant="body1" color="orange" fontWeight="bold">
+//                 Required: ₹ {element.amount}
+//               </Typography>
+//               <Typography variant="body1" color="lime" fontWeight="bold">
+//                 Raised: ₹ {element.audience.reduce((total, a) => total + (parseInt(a.amount) || 0), 0)}
+//               </Typography>
+//             </CardActions>
+//             <CardActions style={{ justifyContent: "center", paddingBottom: "1rem" }}>
+//               <TextField
+//                 inputRef={(ref) => (amountRefs.current[index] = ref)}
+//                 type="number"
+//                 variant="outlined"
+//                 size="small"
+//                 placeholder="Amount (₹)"
+//                 sx={{
+//                   backgroundColor: "white",
+//                   borderRadius: "8px",
+//                   input: { color: "black", textAlign: "center" },
+//                   width: "90%",
+//                 }}
+//               />
+//             </CardActions>
+//             <CardActions>
+//               <Button
+//                 fullWidth
+//                 sx={{
+//                   backgroundColor: "#00e676",
+//                   color: "black",
+//                   fontWeight: "bold",
+//                   "&:hover": {
+//                     backgroundColor: "#00c853",
+//                   },
+//                 }}
+//                 onClick={() => handlePledge(element.pageName, element.title, index)}
+//               >
+//                 Pledge
+//               </Button>
+//             </CardActions>
+//           </Card>
+//         </Grid>
+//       ))}
+//     </Grid>
+//   );
+// }
+
+// export default Projects;
+
+
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -7,239 +155,187 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import { SERVER_URL } from "../../../constant/serverUrl";
+import { useHistory } from "react-router-dom";
 
 function Projects() {
-  const [projects, setProjects] = React.useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const history = useHistory();
+  const [projects, setProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const amountRefs = useRef([]);
+  const [amount, setAmount] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleInputChange = (event) => {
-    let value = event.target.value;
-    value = parseInt(value);
-
-    setInputValue(value + parseInt(inputValue));
-  };
-
-  React.useEffect(() => {
+  // Fetch all projects
+  useEffect(() => {
     axios
       .get(SERVER_URL + "/projects")
       .then((response) => {
-        console.log(response.data);
         setProjects(response.data);
+        setFilteredProjects(response.data); // Initially show all projects
       })
-      .catch((err) => {});
+      .catch((err) => console.log(err));
   }, []);
 
-  const amountRef = React.useRef(null);
-  const amountRefs = React.useRef([]);
+  // Filter projects based on search term
+  const handleSearch = (event) => {
+    const term = event.target.value.toLowerCase();
+    setSearchTerm(term);
 
-  const [amount, setAmount] = useState(232);
+    // Filter projects by title
+    const filtered = projects.filter((project) =>
+      project.title.toLowerCase().includes(term)
+    );
+    setFilteredProjects(filtered);
+  };
 
   const handlePledge = (pageName, projectTitle, idx) => {
-    const pledgeAmount = parseInt(amountRefs.current[idx].value);
-
-    setAmount(pledgeAmount); //
-    // setAmount(amountRefs.current[idx].value);
-
-    handlePayment();
-    console.log(parseInt(amountRefs.current[idx].value));
+    const pledgeAmount = parseInt(amountRefs.current[idx].value) || 0;
+    setAmount(pledgeAmount);
+    handlePayment(pledgeAmount);
 
     axios
       .post(SERVER_URL + "/creator/project/pledge", {
         timestamp: Date.now(),
         projectTitle: projectTitle,
-        amount: amountRefs.current[idx].value,
+        amount: pledgeAmount,
         pageName: pageName,
         audienceEmail: localStorage.getItem("email"),
         firstName: localStorage.getItem("firstName"),
         lastName: localStorage.getItem("lastName"),
       })
-      .then(() => {
-        axios
-          .get(SERVER_URL + "/projects")
-          .then((response) => {
-            setProjects(response.data);
-          })
-          .catch((err) => {});
-      })
+      .then(() => axios.get(SERVER_URL + "/projects").then((response) => setProjects(response.data)))
       .catch((err) => console.log(err));
   };
 
-  const alreadyPledged = (audience) => {
-    let alreadyPledged = false;
-
-    if (audience.length > 0) {
-      audience.forEach((element, index) => {
-        if (element.audienceEmail === localStorage.getItem("email")) {
-          alreadyPledged = true;
-        }
-      });
-    }
-
-    return alreadyPledged;
-  };
-
-  const getRaisedAmount = (audience) => {
-    let raisedAmount = 0;
-    if (audience.length > 0) {
-      audience.forEach((element) => {
-        if (element.amount && element.amount != null) {
-          raisedAmount += parseInt(element.amount);
-        }
-      });
-    }
-
-    return raisedAmount;
-  };
-
-  const handlePayment = () => {
-    console.log(typeof amountRefs);
+  const handlePayment = (amount) => {
     const options = {
-      key: "rzp_test_XphPOSB4djGspx", // Replace with your actual Key ID
-      key_secret: "CCrxVo3coD3SKNM3a0Bbh2my",
+      key: "rzp_test_XphPOSB4djGspx",
       amount: amount * 100,
-      // Amount in paisa (e.g., 1000 paisa = ₹10)
       currency: "INR",
       name: "Fundify",
-      description: "Payment for Product",
-      // order_id: Math.random(), // Generate a unique receipt for each transaction
+      description: "Payment for Pledge",
       handler: function (response) {
-        console.log(response);
-        //response.razorpay_payment_id
-        alert("payment done");
+        alert("Payment Successful!");
       },
       prefill: {
-        name: "Sandeep Kumar",
-        email: "sd769113@gmail.com",
-        contact: "7839107384",
+        name: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+        email: localStorage.getItem("email"),
       },
-      notes: {
-        address: "Fundify Corporate office",
-      },
-      theme: {
-        color: "#F37254", // Customize the color of the Razorpay button
-      },
+      theme: { color: "#00e676" },
     };
-
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
 
+  // Navigate to the detailed page of the selected project
+  const handleViewDetails = (projectId) => {
+    history.push(`/project-details/${projectId}`);
+  };
+
   return (
-    <Grid
-      container
-      style={{
-        padding: "2rem",
-        paddingLeft: "120px",
-        backgroundColor: "black",
-      }}
-      spacing={8}
-    >
-      {amount}
-      {projects.length > 0 &&
-        projects.map((element, idx) => {
-          return (
-            <Grid item>
-              <Card
-                sx={{
-                  width: 345,
-                  "&:hover": {
-                    boxShadow: "0 4px 8px white", // Update with your desired shadow style
-                  },
-                }}
-                elevation={4}
-                key={element.title}
-                style={{
-                  // borderRadius: "22px",
-                  margin: "0 auto",
-                  borderRadius: "8px",
-                  backgroundColor: "#222222",
-                  color: "white",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={element.projectURL}
-                  alt={element.title}
-                  style={{ paddingInline: "1rem", paddingTop: ".5rem" }}
+    <div>
+      {/* Filter Box */}
+      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+  <TextField
+    variant="outlined"
+    size="medium"
+    placeholder="Search by Title"
+    value={searchTerm}
+    onChange={handleSearch}
+    sx={{
+      backgroundColor: "white",
+      borderRadius: "80rem", // More rounded corners
+      width: "40%", // Reduced width for a narrower look
+      height:"70%",
+      input: { color: "black", textAlign: "center" },
+      marginTop: "2rem",
+      fontWeight: "bold",
+    }}
+  />
+</div>
+
+
+      <Grid container spacing={4} style={{ padding: "3rem", backgroundColor: "#f5f5f5" }}>
+        {filteredProjects.map((element, index) => (
+          <Grid item key={index} xs={12} sm={6} md={4} lg={4}>
+            <Card
+              sx={{
+                width: 330,
+                borderRadius: "16px",
+                backgroundColor: "#1e1e1e",
+                color: "white",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  boxShadow: "0 6px 12px rgba(0, 230, 118, 0.5)",
+                },
+              }}
+              onClick={() => handleViewDetails(element._id)} // Clicking redirects to detailed view
+            >
+              <CardMedia
+                component="img"
+                height="220"
+                image={element.imageUrl}
+                alt={element.title}
+                style={{ borderRadius: "16px 16px 0 0" }}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" style={{ color: "#00e676", textAlign: "center" }}>
+                  {element.title}
+                </Typography>
+                <Typography variant="body2" color="lightgrey" textAlign="center">
+                  {element.description}
+                </Typography>
+              </CardContent>
+              <CardActions style={{ display: "flex", justifyContent: "space-between", padding: "1rem" }}>
+                <Typography variant="body1" color="orange" fontWeight="bold">
+                  Required: ₹ {element.amount}
+                </Typography>
+                <Typography variant="body1" color="lime" fontWeight="bold">
+                  Raised: ₹ {element.audience.reduce((total, a) => total + (parseInt(a.amount) || 0), 0)}
+                </Typography>
+              </CardActions>
+              <CardActions style={{ justifyContent: "center", paddingBottom: "1rem" }}>
+                <TextField
+                  inputRef={(ref) => (amountRefs.current[index] = ref)}
+                  type="number"
+                  variant="outlined"
+                  size="small"
+                  placeholder="Amount (₹)"
+                  sx={{
+                    backgroundColor: "white",
+                    borderRadius: "8px",
+                    input: { color: "black", textAlign: "center" },
+                    width: "90%",
+                  }}
                 />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {element.title}
-                  </Typography>
-                  <Typography variant="body2" color="white">
-                    {element.description}
-                  </Typography>
-                </CardContent>
-                <CardActions
-                  style={{
-                    paddingInline: "1rem",
-                    paddingTop: "0rem",
-                    paddingBottom: "1rem",
+              </CardActions>
+              <CardActions>
+                <Button
+                  fullWidth
+                  sx={{
+                    backgroundColor: "#00e676",
+                    color: "black",
+                    fontWeight: "bold",
+                    "&:hover": {
+                      backgroundColor: "#00c853",
+                    },
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent click from triggering project detail navigation
+                    handlePledge(element.pageName, element.title, index);
                   }}
                 >
-                  <Grid
-                    container
-                    alignItems="center"
-                    justifyContent="space-between"
-                  >
-                    <Grid item>
-                      <Grid container spacing={2}>
-                        <Grid item>
-                          <b style={{ color: "orange" }}>
-                            Required:&ensp;₹&nbsp;{element.amount}
-                          </b>
-                        </Grid>
-                        <Grid item>
-                          <b style={{ color: "lime" }}>
-                            Raised:&ensp;₹ {getRaisedAmount(element.audience)}
-                          </b>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </CardActions>
-                <Typography paddingLeft={2} color="lightgrey">
-                  <b>Amount (in ₹)</b>
-                </Typography>
-                <CardActions>
-                  <Grid
-                    container
-                    paddingX={1}
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <input
-                      type="number"
-                      size={10}
-                      ref={(ref) => (amountRefs.current[idx] = ref)}
-                      style={{ paddingBlock: ".25rem" }}
-                    />
-                    <br />
-                    <span style={{ marginInline: ".25rem" }}></span>
-                    <Button
-                      style={{
-                        paddingTop: "1px",
-                        backgroundColor: "teal",
-                        color: "white",
-                      }}
-                      size="small"
-                      onClick={() =>
-                        handlePledge(element.pageName, element.title, idx)
-                      }
-                      // disabled={alreadyPledged(element.audiences)}
-                    >
-                      {/* {alreadyPledged(element.audiences) ? 'Pledged' : 'Pledge'} */}
-                      Pledge
-                    </Button>
-                  </Grid>
-                </CardActions>
-              </Card>
-            </Grid>
-          );
-        })}
-    </Grid>
+                  Pledge
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   );
 }
 

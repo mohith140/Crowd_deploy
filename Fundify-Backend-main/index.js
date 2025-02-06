@@ -198,6 +198,7 @@ app.post('/projects/new', (req, res) => {
     title: req.body.title,
     description: req.body.description,
     amount: req.body.amount,
+    imageUrl: req.body.imageUrl,
     projectURL:""
   });
 
@@ -421,6 +422,18 @@ app.post('/creators/exclusive', async (req, res) => {
   res.send(exclusiveData)
 });
 
+app.get('/project-details/:projectId', async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+    res.json(project);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true }, () => {
   console.log('Connected to database!');
 });
