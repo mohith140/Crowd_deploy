@@ -112,7 +112,7 @@ export default function Funds() {
                 {supporters.length > 0 &&
                   supporters.map((row) => (
                     <TableRow
-                      key={row.audienceEmail}
+                      key={row.email}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell
@@ -123,10 +123,10 @@ export default function Funds() {
                         {row.firstName + " " + row.lastName}
                       </TableCell>
                       <TableCell align="right" style={{ color: "black" }}>
-                        {row.audienceEmail}
+                        {row.email}
                       </TableCell>
                       <TableCell align="right" style={{ color: "black" }}>
-                        {row.amount}
+                        {row.projects.filter}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -161,7 +161,7 @@ export default function Funds() {
                     row.audience.map((innerRow) => {
                       return (
                         <TableRow
-                          key={innerRow.audienceEmail}
+                          key={innerRow.email}
                           sx={{
                             "&:last-child td, &:last-child th": { border: 0 },
                           }}
@@ -180,7 +180,7 @@ export default function Funds() {
                             {innerRow.firstName + " " + innerRow.lastName}
                           </TableCell>
                           <TableCell align="right" style={{ color: "black" }}>
-                            {innerRow.audienceEmail}
+                            {innerRow.email}
                           </TableCell>
                           <TableCell align="right" style={{ color: "black" }}>
                             {innerRow.amount}

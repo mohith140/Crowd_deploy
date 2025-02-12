@@ -26,6 +26,7 @@ function Exclusive() {
   const [userEmail,setUserEmail] = useState('');
 
   useEffect(()=>{
+  
     const email = localStorage.getItem("email");
     setUserEmail(email);
   },[])

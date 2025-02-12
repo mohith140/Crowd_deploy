@@ -139,7 +139,9 @@ export default function Home() {
         <Route path="/audiencedashboard/exclusive">
           <Exclusive />
         </Route>
-        <Route path="/project-details/:projectId" component={ProjectDetails} />
+        <Route path="/project-details/:projectId"  >
+       <ProjectDetails/>
+        </Route>
       </Switch>
     </React.Fragment>
   );

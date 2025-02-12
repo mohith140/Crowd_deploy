@@ -19,6 +19,7 @@ import AudienceDashboard from "./components/AudienceDashboard";
 import Home from "./components/Home";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import ProjectDetails from "./components/audience/creators/ProjectDetails";
 
 const theme = createTheme({
   palette: {
@@ -51,6 +52,9 @@ function App() {
         </Route>
         <Route path="/home/creators">
           <Home />
+        </Route>
+        <Route path="/project-details/:projectId">
+          <ProjectDetails />
         </Route>
         <Route path="/" exact>
           <Redirect to="/home/creators" />

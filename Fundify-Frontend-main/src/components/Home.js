@@ -78,9 +78,9 @@ export default function Home() {
                   <Grid item style={{ marginLeft: "3rem" }}>
                     <Button
                       color="inherit"
-                      startIcon={<CurrencyExchangeIcon />}
+                      startIcon={""}
                     >
-                      <b>Fundify</b>
+                      <b>Crowd Funding</b>
                     </Button>
                   </Grid>
                   <Box

@@ -10,6 +10,8 @@ const projectSchema = mongoose.Schema({
   imageUrl:String,
   n1:String,
   audience: [],
+  category:String
+  
 });
 
 module.exports = mongoose.model('Project', projectSchema);
