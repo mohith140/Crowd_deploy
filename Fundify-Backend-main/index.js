@@ -470,7 +470,7 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const storage = new Storage({
+const storage1 = new Storage({
   keyFilename: './google-cloud-creds.json',
   projectId: 'jovial-pod-392309',
 });
@@ -499,6 +499,16 @@ const uploadToGoogleCloudStorage = (file, destination) => {
     fileStream.end(file.buffer);
   });
 };
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 app.use(express.static('public'));
 
@@ -792,7 +802,87 @@ app.post('/creator/project/pledge', (req, res) => {
       .then(() => res.status(200).json({ message: "Project deleted successfully" }))
       .catch((error) => res.status(500).json({ error: "Failed to delete project" }));
   });
-  
+  app.get('/api/profile/:email', async (req, res) => {
+    console.log("jkl")
+    try {
+      const profile = await Creator.findOne({ email: req.params.email });
+      if (!profile) {
+        return res.status(404).send("Profile not found");
+      }
+      res.send(profile);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
+    }
+  });
+  app.post('/api/profile/upload', upload.single('profileImage'), async (req, res) => {
+    try {
+      const { email } = req.body;
+      const profile = await Creator.findOne({ email: email });
+      if (!profile) {
+        return res.status(404).send("Profile not found");
+      }
+      profile.profileImage = `/uploads/${req.file.filename}`;
+      await profile.save();
+      res.send(profile);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
+    }
+  });
+
+  app.post('/api/profile/upload', upload.single('profileImage'), async (req, res) => {
+    try {
+      const { email } = req.body;
+      const profile = await Creator.findOne({ email: email });
+      if (!profile) {
+        return res.status(404).send("Profile not found");
+      }
+      profile.profileImage = `/uploads/${req.file.filename}`;
+      await profile.save();
+      res.send(profile);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
+    }
+  });
+  app.post('/api/profile/update', upload.single('profileImage'), async (req, res) => {
+    try {
+      const { email, firstName, lastName, pageName, description, category } = req.body;
+      const profile = await Creator.findOne({ email: email });
+      if (!profile) {
+        return res.status(404).send("Profile not found");
+      }
+      profile.firstName = firstName;
+      profile.lastName = lastName;
+      profile.pageName = pageName;
+      profile.description = description;
+      profile.category = category;
+      if (req.file) {
+        profile.profileImage = `/uploads/${req.file.filename}`;
+      }
+      await profile.save();
+      //res.send(profile.save();
+      res.send(profile);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
+    }
+  });
+  //profile audience
+  app.get('/api/profile/audience/:email', async (req, res) => {
+    try {
+      console.log(req.params)
+      const profile = await Audience.findOne({ email: req.params.email });
+      if (!profile) {
+        return res.status(404).send("Profile not found");
+      }
+      res.send(profile);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
+    }
+  });
 // MongoDB connection and app listen
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true }, () => {
   console.log('Connected to database!');

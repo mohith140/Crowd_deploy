@@ -1,5 +1,6 @@
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
+import { Avatar } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -111,7 +112,11 @@ export default function Home() {
                   Exclusive Content
                 </Button>
               </Grid>
+             
               <Grid item>
+              <Button color="inherit" onClick={() => history.push(`/profile1/audience/${localStorage.getItem("email")}`)}>
+                <Avatar></Avatar>
+                </Button>
                 <Button color="inherit">
                   {localStorage.getItem("firstName")}
                 </Button>

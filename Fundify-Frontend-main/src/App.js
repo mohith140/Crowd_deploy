@@ -11,6 +11,8 @@ import {
   Link,
   Redirect,
 } from "react-router-dom";
+import Profile from "./components/creator/Profile";
+import Profile1 from "./components/audience/creators/Profile1.js";
 import SignUpCreator from "./components/SignUpCreator";
 import SignUpAudience from "./components/SignUpAudience";
 import Login from "./components/Login";
@@ -38,12 +40,22 @@ function App() {
         <Route path="/creatordashboard">
           <CreatorDashboard />
         </Route>
+        
+        <Route path="/profile/:email" >
+        <Profile/>
+        </Route>
+   
         <Route path="/login">
           <Login />
         </Route>
         <Route path="/signupaudience">
           <SignUpAudience />
-        </Route>
+          </Route>
+
+          <Route path="/profile1/audience/:email"  >
+          <Profile1/>
+          </Route>
+        
         <Route path="/signupcreator">
           <SignUpCreator />
         </Route>

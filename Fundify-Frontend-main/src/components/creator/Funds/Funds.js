@@ -126,7 +126,7 @@ export default function Funds() {
                         {row.email}
                       </TableCell>
                       <TableCell align="right" style={{ color: "black" }}>
-                        {row.projects.filter}
+                        {[row.projects.filter]}
                       </TableCell>
                     </TableRow>
                   ))}
