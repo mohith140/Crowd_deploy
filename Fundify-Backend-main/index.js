@@ -526,7 +526,15 @@ app.post("/orders", async (req, res) => {
 });
 
 // Signup Route (with bcryptjs for password hashing)
-app.post('/users/new', (req, res) => {
+app.post('/users/new', async (req, res) => {
+  try {
+    // Check if a user with the provided email already exists
+    const existingUser = await Creator.findOne({ email: req.body.email }) || await Audience.findOne({ email: req.body.email });
+
+    if (existingUser) {
+     // console.log("out")
+      return res.status(400).send("An account with this email already exists.");
+    }
   const hashedPassword = bcrypt.hashSync(req.body.password, 10); // Hash the password
 
   if (req.body.userType === 'creator') {
@@ -565,6 +573,10 @@ app.post('/users/new', (req, res) => {
       res.send(audience);
     });
   }
+} catch (error) {
+  console.error(error);
+  res.status(500).send("Server error");
+}
 });
 
 // Login Route (with bcryptjs for password comparison)
