@@ -272,7 +272,7 @@ const theme = createTheme();
 
 export default function SignUpCreator() {
   let history = useHistory();
-
+  const [errorMessage, setErrorMessage] = React.useState("");
   const handleSubmit1 = (event) => {
     console.log("jkjk")
     event.preventDefault();
@@ -305,7 +305,9 @@ export default function SignUpCreator() {
         console.log(response+"klkl");
         history.replace("/creatordashboard/projects");
       })
-      .catch((error) => console.log(error+"error"));
+      .catch((error) =>{
+        setErrorMessage("An account with this email already exists.");
+      });
   };
 
   return (
@@ -360,7 +362,12 @@ export default function SignUpCreator() {
                 </Avatar>
                 <Typography component="h1" variant="h5">
                   Sign Up - Creator
-                </Typography>
+              </Typography>
+              {errorMessage && (
+                  <Typography color="error" sx={{ mt: 2 }}>
+                    {errorMessage}
+                  </Typography>
+                )}
                 <Box
                   component="form"
                   noValidate

@@ -46,6 +46,7 @@ const theme = createTheme();
 
 export default function LoginAudience() {
   let history = useHistory();
+  const [errorMessage, setErrorMessage] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
   const handleSubmit = (event) => {
@@ -78,6 +79,9 @@ export default function LoginAudience() {
         } else {
           setOpen(true);
         }
+      })
+      .catch((err) => {
+        setErrorMessage("Invalid Credentials");
       });
   };
 
@@ -115,6 +119,11 @@ export default function LoginAudience() {
               <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
                 <LockOutlinedIcon />
               </Avatar>
+              {errorMessage && (
+                  <Typography color="error" sx={{ mt: 2 }} >
+                    {errorMessage}
+                  </Typography>
+                )}
               <Typography component="h1" variant="h5">
                 Login
               </Typography>
@@ -172,6 +181,7 @@ export default function LoginAudience() {
                     />
                   </RadioGroup>
                 </FormControl>
+               
                 <Button
                   type="submit"
                   fullWidth
@@ -216,6 +226,7 @@ export default function LoginAudience() {
                       </Link>
                     </small>
                   </Grid>
+                  
                 </Grid>
               </Box>
             </Box>

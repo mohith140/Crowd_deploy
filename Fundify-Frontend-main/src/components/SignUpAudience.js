@@ -35,7 +35,7 @@ const theme = createTheme();
 
 export default function SignUpAudience() {
   let history = useHistory();
-
+  const [errorMessage, setErrorMessage] = React.useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -56,7 +56,7 @@ export default function SignUpAudience() {
         history.replace("/audiencedashboard/creators");
       })
       .catch((err) => {
-        console.log(err);
+        setErrorMessage("An account with this email already exists.");
       });
   };
 
@@ -115,6 +115,11 @@ export default function SignUpAudience() {
               <Typography component="h1" variant="h5">
                 Sign Up - Audience
               </Typography>
+              {errorMessage && (
+                  <Typography color="error" sx={{ mt: 2 }}>
+                    {errorMessage}
+                  </Typography>
+                )}
               <Box
                 component="form"
                 noValidate
