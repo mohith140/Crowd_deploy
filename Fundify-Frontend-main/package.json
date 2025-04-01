@@ -1,3 +1,4 @@
+
 {
   "name": "fundify",
   "version": "0.1.0",
@@ -26,7 +27,7 @@
     "eject": "react-scripts eject"
   },
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "eslintConfig": {
     "extends": [
