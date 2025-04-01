@@ -8,6 +8,7 @@ const projectSchema = mongoose.Schema({
   amount: Number,
   projectURL: String,
   profileImage:String,
+  imageUrl:String,
   n1:String,
   audience: [],
   category:String
